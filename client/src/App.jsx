@@ -12,7 +12,7 @@ function App() {
         {/* Sales Forecasting */}
         <main className="flex-1 p-4 overflow-auto">
           <Routes>
-            <Route path="/" element={<SalesRecord />} />
+            <Route path="/sales-forecasting" element={<SalesRecord />} />
           </Routes>
         </main>
       </div>

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from 'react-router-dom';
 import {
   Card,
   Typography,
@@ -57,30 +58,38 @@ export function MultiLevelSidebar() {
             </ListItem>
             <AccordionBody className="py-1">
               <List className="p-0">
-                <ListItem>
-                  <ListItemPrefix>
-                    <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                  </ListItemPrefix>
-                  Sales Forecasting
-                </ListItem>
-                <ListItem>
-                  <ListItemPrefix>
-                    <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                  </ListItemPrefix>
-                  Customer Segmentation
-                </ListItem>
-                <ListItem>
-                  <ListItemPrefix>
-                    <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                  </ListItemPrefix>
-                  Customer Demand Analysis
-                </ListItem>
-                <ListItem>
-                  <ListItemPrefix>
-                    <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                  </ListItemPrefix>
-                  Customer Correlation
-                </ListItem>
+                <Link to="/sales-forecasting" className="block">
+                  <ListItem>
+                    <ListItemPrefix>
+                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                    </ListItemPrefix>
+                    Sales Forecasting
+                  </ListItem>
+                </Link>
+                <Link to="/customer-segmentation" className="block">
+                  <ListItem>
+                    <ListItemPrefix>
+                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                    </ListItemPrefix>
+                    Customer Segmentation
+                  </ListItem>
+                </Link>
+                <Link to="/customer-demand-analysis" className="block">
+                  <ListItem>
+                    <ListItemPrefix>
+                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                    </ListItemPrefix>
+                    Customer Demand Analysis
+                  </ListItem>
+                </Link>
+                <Link to="/customer-demand" className="block">
+                  <ListItem>                
+                    <ListItemPrefix>
+                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                    </ListItemPrefix>
+                    Customer Correlation
+                  </ListItem>
+                </Link>
               </List>
             </AccordionBody>
           </Accordion>
