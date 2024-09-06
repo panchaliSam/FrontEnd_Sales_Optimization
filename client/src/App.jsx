@@ -1,14 +1,22 @@
-// import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import {MultiLevelSidebar} from './components/sideNavBar';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { MultiLevelSidebar } from './components/sideNavBar';
+import { SalesRecord } from './components/salesRecord';
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <MultiLevelSidebar/>
-      </BrowserRouter>
-    </div>
+    <BrowserRouter>
+      <div className="flex h-screen">
+        {/* Sidebar Component */}
+        <MultiLevelSidebar className="w-64 bg-gray-100" />
+        
+        {/* Sales Forecasting */}
+        <main className="flex-1 p-4 overflow-auto">
+          <Routes>
+            <Route path="/" element={<SalesRecord />} />
+          </Routes>
+        </main>
+      </div>
+    </BrowserRouter>
   );
 }
 
