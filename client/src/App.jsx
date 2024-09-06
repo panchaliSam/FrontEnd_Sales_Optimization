@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { MultiLevelSidebar } from './components/sideNavBar';
 import { SalesRecord } from './components/salesRecord';
 import { CustomerRecord } from './components/customerRecord';
+import {SeasonalDemand} from './components/customerDemand';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Routes>
             <Route path="/sales-forecasting" element={<SalesRecord />} />
             <Route path="/customer-segmentation" element={<CustomerRecord />} />
+            <Route path="/customer-demand-analysis" element={<SeasonalDemand />} />
           </Routes>
         </main>
       </div>
