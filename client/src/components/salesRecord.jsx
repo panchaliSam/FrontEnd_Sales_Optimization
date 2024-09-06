@@ -95,6 +95,10 @@ export function SalesRecord() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleSelectChange = (name, value) => {
+    setFormData({ ...formData, [name]: value });
+  };
+
   const handleSubmitEdit = async () => {
     try {
       await axios.put(`http://localhost:4002/api/salesRecord/${recordToEdit}`, formData);
@@ -109,7 +113,7 @@ export function SalesRecord() {
     }
   };
 
-  const handleSubmitAdd = async (formData) => {
+  const handleSubmitAdd = async () => {
     try {
       await axios.post('http://localhost:4002/api/salesRecord', formData);
       setSalesRecords([...salesRecords, formData]);
@@ -242,7 +246,7 @@ export function SalesRecord() {
               label="Product Category"
               name="productCategory"
               value={formData.productCategory}
-              onChange={(e) => handleChange({ target: { name: 'productCategory', value: e } })}
+              onChange={(e) => handleSelectChange('productCategory', e)}
             >
               {productCategories.map((category) => (
                 <Option key={category} value={category}>
@@ -254,7 +258,7 @@ export function SalesRecord() {
               label="Product Brand"
               name="productBrand"
               value={formData.productBrand}
-              onChange={(e) => handleChange({ target: { name: 'productBrand', value: e } })}
+              onChange={(e) => handleSelectChange('productBrand', e)}
             >
               {productBrands.map((brand) => (
                 <Option key={brand} value={brand}>
@@ -266,7 +270,7 @@ export function SalesRecord() {
               label="Customer Location"
               name="customerLocation"
               value={formData.customerLocation}
-              onChange={(e) => handleChange({ target: { name: 'customerLocation', value: e } })}
+              onChange={(e) => handleSelectChange('customerLocation', e)}
             >
               {sriLankanProvinces.map((province) => (
                 <Option key={province} value={province}>
@@ -277,7 +281,11 @@ export function SalesRecord() {
           </div>
         </DialogBody>
         <DialogFooter>
-          <Button variant="text" color="red" onClick={() => setEditDialogOpen(false)}>
+          <Button
+            variant="text"
+            color="red"
+            onClick={() => setEditDialogOpen(false)}
+          >
             Cancel
           </Button>
           <Button
@@ -320,7 +328,7 @@ export function SalesRecord() {
               label="Product Category"
               name="productCategory"
               value={formData.productCategory}
-              onChange={(e) => handleChange({ target: { name: 'productCategory', value: e } })}
+              onChange={(e) => handleSelectChange('productCategory', e)}
             >
               {productCategories.map((category) => (
                 <Option key={category} value={category}>
@@ -332,7 +340,7 @@ export function SalesRecord() {
               label="Product Brand"
               name="productBrand"
               value={formData.productBrand}
-              onChange={(e) => handleChange({ target: { name: 'productBrand', value: e } })}
+              onChange={(e) => handleSelectChange('productBrand', e)}
             >
               {productBrands.map((brand) => (
                 <Option key={brand} value={brand}>
@@ -344,7 +352,7 @@ export function SalesRecord() {
               label="Customer Location"
               name="customerLocation"
               value={formData.customerLocation}
-              onChange={(e) => handleChange({ target: { name: 'customerLocation', value: e } })}
+              onChange={(e) => handleSelectChange('customerLocation', e)}
             >
               {sriLankanProvinces.map((province) => (
                 <Option key={province} value={province}>
@@ -355,13 +363,17 @@ export function SalesRecord() {
           </div>
         </DialogBody>
         <DialogFooter>
-          <Button variant="text" color="red" onClick={() => setAddDialogOpen(false)}>
+          <Button
+            variant="text"
+            color="red"
+            onClick={() => setAddDialogOpen(false)}
+          >
             Cancel
           </Button>
           <Button
             variant="gradient"
             color="green"
-            onClick={() => handleSubmitAdd(formData)}
+            onClick={handleSubmitAdd}
           >
             Save
           </Button>
@@ -379,10 +391,14 @@ export function SalesRecord() {
       >
         <DialogHeader>Confirm Deletion</DialogHeader>
         <DialogBody divider>
-          Are you sure you want to delete this sales record?
+          <Typography>Are you sure you want to delete this record?</Typography>
         </DialogBody>
         <DialogFooter>
-          <Button variant="text" color="red" onClick={() => setDeleteDialogOpen(false)}>
+          <Button
+            variant="text"
+            color="red"
+            onClick={() => setDeleteDialogOpen(false)}
+          >
             Cancel
           </Button>
           <Button
