@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { MultiLevelSidebar } from './components/sideNavBar';
 import { SalesRecord } from './components/salesRecord';
+import { CustomerRecord } from './components/customerRecord';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <main className="flex-1 p-4 overflow-auto">
           <Routes>
             <Route path="/sales-forecasting" element={<SalesRecord />} />
+            <Route path="/customer-segmentation" element={<CustomerRecord />} />
           </Routes>
         </main>
       </div>
