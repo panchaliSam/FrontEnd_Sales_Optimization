@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import {
   Card,
   Typography,
@@ -10,14 +10,14 @@ import {
   Chip,
   Accordion,
   AccordionHeader,
-  AccordionBody,
+  AccordionBody
 } from "@material-tailwind/react";
 import {
   PresentationChartBarIcon,
   UserCircleIcon,
   Cog6ToothIcon,
   InboxIcon,
-  PowerIcon,
+  PowerIcon
 } from "@heroicons/react/24/solid";
 import { ChevronRightIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 
@@ -42,12 +42,17 @@ export function MultiLevelSidebar() {
             icon={
               <ChevronDownIcon
                 strokeWidth={2.5}
-                className={`mx-auto h-4 w-4 transition-transform ${open === 1 ? "rotate-180" : ""}`}
+                className={`mx-auto h-4 w-4 transition-transform ${
+                  open === 1 ? "rotate-180" : ""
+                }`}
               />
             }
           >
             <ListItem className="p-0" selected={open === 1}>
-              <AccordionHeader onClick={() => handleOpen(1)} className="border-b-0 p-3">
+              <AccordionHeader
+                onClick={() => handleOpen(1)}
+                className="border-b-0 p-3"
+              >
                 <ListItemPrefix>
                   <PresentationChartBarIcon className="h-5 w-5" />
                 </ListItemPrefix>
@@ -74,7 +79,7 @@ export function MultiLevelSidebar() {
                     Customer Segmentation
                   </ListItem>
                 </Link>
-                <Link to="/customer-demand-analysis" className="block">
+                <Link to="/customer-demand-analysis" className="block mb-0">
                   <ListItem>
                     <ListItemPrefix>
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
@@ -82,7 +87,8 @@ export function MultiLevelSidebar() {
                     Customer Demand Analysis
                   </ListItem>
                 </Link>
-                <Link to="/customer-demand" className="block">
+
+                <Link to="/customer-correlation" className="block">
                   <ListItem>                
                     <ListItemPrefix>
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
@@ -90,16 +96,28 @@ export function MultiLevelSidebar() {
                     Customer Correlation
                   </ListItem>
                 </Link>
+
+                
               </List>
             </AccordionBody>
           </Accordion>
+
+
+
+
           <ListItem>
             <ListItemPrefix>
               <InboxIcon className="h-5 w-5" />
             </ListItemPrefix>
             Inbox
             <ListItemSuffix>
-              <Chip value="14" size="sm" variant="ghost" color="blue-gray" className="rounded-full" />
+              <Chip
+                value="14"
+                size="sm"
+                variant="ghost"
+                color="blue-gray"
+                className="rounded-full"
+              />
             </ListItemSuffix>
           </ListItem>
           <ListItem>
