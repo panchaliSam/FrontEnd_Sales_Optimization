@@ -26,6 +26,12 @@ const sriLankanProvinces = [
   'Uva', 'Sabaragamuwa'
 ];
 const productCategories = ['Clothing', 'Footwear', 'Accessories'];
+const months = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+const currentYear = new Date().getFullYear();
+const years = Array.from({ length: currentYear - 1999 }, (_, i) => currentYear - i);
 
 export function SalesRecord() {
   const [salesRecords, setSalesRecords] = useState([]);
@@ -37,7 +43,8 @@ export function SalesRecord() {
   const [recordToEdit, setRecordToEdit] = useState(null);
   const [recordToDelete, setRecordToDelete] = useState(null);
   const [formData, setFormData] = useState({
-    date: '',
+    year: '',
+    month: '',
     salesQuantity: '',
     productCategory: '',
     productBrand: '',
@@ -63,7 +70,8 @@ export function SalesRecord() {
   const handleEdit = (record) => {
     setRecordToEdit(record._id);
     setFormData({
-      date: record.date,
+      year: record.year,
+      month: record.month,
       salesQuantity: record.salesQuantity,
       productCategory: record.productCategory,
       productBrand: record.productBrand,
@@ -110,6 +118,14 @@ export function SalesRecord() {
     } finally {
       setEditDialogOpen(false);
       setRecordToEdit(null);
+      setFormData({
+        year: '',
+        month: '',
+        salesQuantity: '',
+        productCategory: '',
+        productBrand: '',
+        customerLocation: ''
+      });
     }
   };
 
@@ -123,6 +139,14 @@ export function SalesRecord() {
       alert('Failed to add sales record.');
     } finally {
       setAddDialogOpen(false);
+      setFormData({
+        year: '',
+        month: '',
+        salesQuantity: '',
+        productCategory: '',
+        productBrand: '',
+        customerLocation: ''
+      });
     }
   };
 
@@ -130,7 +154,7 @@ export function SalesRecord() {
   if (error) return <div className="p-4 text-red-600">{error}</div>;
 
   return (
-    <Card className="">
+    <Card>
       <CardHeader floated={false} shadow={false}>
         <div className="flex items-center justify-between">
           <Typography variant="h5" className="italic">
@@ -149,7 +173,8 @@ export function SalesRecord() {
         <table className="mt-4 w-full min-w-max table-auto text-left bg-white rounded-lg shadow-md">
           <thead>
             <tr className="bg-gray-100">
-              <th className="p-3 border-b">Date</th>
+              <th className="p-3 border-b">Year</th>
+              <th className="p-3 border-b">Month</th>
               <th className="p-3 border-b">Sales Quantity</th>
               <th className="p-3 border-b">Product Category</th>
               <th className="p-3 border-b">Product Brand</th>
@@ -161,7 +186,8 @@ export function SalesRecord() {
             {salesRecords.length > 0 ? (
               salesRecords.map((record) => (
                 <tr key={record._id} className="hover:bg-gray-50">
-                  <td className="p-3 border-b">{new Date(record.date).toLocaleDateString()}</td>
+                  <td className="p-3 border-b">{record.year}</td>
+                  <td className="p-3 border-b">{record.month}</td>
                   <td className="p-3 border-b">{record.salesQuantity}</td>
                   <td className="p-3 border-b">{record.productCategory}</td>
                   <td className="p-3 border-b">{record.productBrand}</td>
@@ -190,7 +216,7 @@ export function SalesRecord() {
               ))
             ) : (
               <tr>
-                <td colSpan="6" className="p-3 text-center">No records found</td>
+                <td colSpan="7" className="p-3 text-center">No records found</td>
               </tr>
             )}
           </tbody>
@@ -199,165 +225,68 @@ export function SalesRecord() {
 
       <CardFooter className="flex items-center justify-between border-t p-4">
         <Typography variant="small" color="blue-gray" className="font-normal">
-          {/* Page 1 of 10 */}
+          Total Records: {salesRecords.length}
         </Typography>
-        <div className="flex gap-2">
-          <Button
-            variant="filled"
-            size="sm"
-            className="bg-green-500 hover:bg-green-600"
-            onClick={() => setAddDialogOpen(true)}
-          >
-            Add
-          </Button>
-          <Button variant="filled" size="sm" className="bg-blue-500 hover:bg-blue-600">
-            Download CSV
-          </Button>
-        </div>
+        <Button onClick={() => setAddDialogOpen(true)} variant="gradient">
+          Add Sales Record
+        </Button>
       </CardFooter>
 
-      {/* Edit Sales Record Dialog */}
-      <Dialog
-        open={editDialogOpen}
-        handler={() => setEditDialogOpen(false)}
-        animate={{
-          mount: { scale: 1, y: 0 },
-          unmount: { scale: 0.9, y: -100 },
-        }}
-      >
-        <DialogHeader>Edit Sales Record</DialogHeader>
-        <DialogBody divider>
-          <div className="grid grid-cols-1 gap-4">
-            <Input
-              type="date"
-              label="Date"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-            />
-            <Input
-              type="number"
-              label="Sales Quantity"
-              name="salesQuantity"
-              value={formData.salesQuantity}
-              onChange={handleChange}
-            />
-            <Select
-              label="Product Category"
-              name="productCategory"
-              value={formData.productCategory}
-              onChange={(e) => handleSelectChange('productCategory', e)}
-            >
-              {productCategories.map((category) => (
-                <Option key={category} value={category}>
-                  {category}
-                </Option>
-              ))}
-            </Select>
-            <Select
-              label="Product Brand"
-              name="productBrand"
-              value={formData.productBrand}
-              onChange={(e) => handleSelectChange('productBrand', e)}
-            >
-              {productBrands.map((brand) => (
-                <Option key={brand} value={brand}>
-                  {brand}
-                </Option>
-              ))}
-            </Select>
-            <Select
-              label="Customer Location"
-              name="customerLocation"
-              value={formData.customerLocation}
-              onChange={(e) => handleSelectChange('customerLocation', e)}
-            >
-              {sriLankanProvinces.map((province) => (
-                <Option key={province} value={province}>
-                  {province}
-                </Option>
-              ))}
-            </Select>
-          </div>
-        </DialogBody>
-        <DialogFooter>
-          <Button
-            variant="text"
-            color="red"
-            onClick={() => setEditDialogOpen(false)}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="gradient"
-            color="green"
-            onClick={handleSubmitEdit}
-          >
-            Save
-          </Button>
-        </DialogFooter>
-      </Dialog>
-
       {/* Add Sales Record Dialog */}
-      <Dialog
-        open={addDialogOpen}
-        handler={() => setAddDialogOpen(false)}
-        animate={{
-          mount: { scale: 1, y: 0 },
-          unmount: { scale: 0.9, y: -100 },
-        }}
-      >
+      <Dialog open={addDialogOpen} handler={() => setAddDialogOpen(false)}>
         <DialogHeader>Add Sales Record</DialogHeader>
         <DialogBody divider>
-          <div className="grid grid-cols-1 gap-4">
-            <Input
-              type="date"
-              label="Date"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-            />
+          <div className="grid gap-4">
+            <Select
+              label="Year"
+              value={formData.year}
+              onChange={(value) => handleSelectChange('year', value)}
+            >
+              {years.map(year => (
+                <Option key={year} value={year}>{year}</Option>
+              ))}
+            </Select>
+            <Select
+              label="Month"
+              value={formData.month}
+              onChange={(value) => handleSelectChange('month', value)}
+            >
+              {months.map(month => (
+                <Option key={month} value={month}>{month}</Option>
+              ))}
+            </Select>
             <Input
               type="number"
-              label="Sales Quantity"
               name="salesQuantity"
+              label="Sales Quantity"
               value={formData.salesQuantity}
               onChange={handleChange}
             />
             <Select
               label="Product Category"
-              name="productCategory"
               value={formData.productCategory}
-              onChange={(e) => handleSelectChange('productCategory', e)}
+              onChange={(value) => handleSelectChange('productCategory', value)}
             >
-              {productCategories.map((category) => (
-                <Option key={category} value={category}>
-                  {category}
-                </Option>
+              {productCategories.map(category => (
+                <Option key={category} value={category}>{category}</Option>
               ))}
             </Select>
             <Select
               label="Product Brand"
-              name="productBrand"
               value={formData.productBrand}
-              onChange={(e) => handleSelectChange('productBrand', e)}
+              onChange={(value) => handleSelectChange('productBrand', value)}
             >
-              {productBrands.map((brand) => (
-                <Option key={brand} value={brand}>
-                  {brand}
-                </Option>
+              {productBrands.map(brand => (
+                <Option key={brand} value={brand}>{brand}</Option>
               ))}
             </Select>
             <Select
               label="Customer Location"
-              name="customerLocation"
               value={formData.customerLocation}
-              onChange={(e) => handleSelectChange('customerLocation', e)}
+              onChange={(value) => handleSelectChange('customerLocation', value)}
             >
-              {sriLankanProvinces.map((province) => (
-                <Option key={province} value={province}>
-                  {province}
-                </Option>
+              {sriLankanProvinces.map(province => (
+                <Option key={province} value={province}>{province}</Option>
               ))}
             </Select>
           </div>
@@ -368,30 +297,108 @@ export function SalesRecord() {
             color="red"
             onClick={() => setAddDialogOpen(false)}
           >
-            Cancel
+            <Typography variant="small" color="red" className="font-normal">
+              Cancel
+            </Typography>
           </Button>
           <Button
             variant="gradient"
-            color="green"
             onClick={handleSubmitAdd}
           >
-            Save
+            <Typography variant="small" color="white" className="font-normal">
+              Add Record
+            </Typography>
           </Button>
         </DialogFooter>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
-      <Dialog
-        open={deleteDialogOpen}
-        handler={() => setDeleteDialogOpen(false)}
-        animate={{
-          mount: { scale: 1, y: 0 },
-          unmount: { scale: 0.9, y: -100 },
-        }}
-      >
-        <DialogHeader>Confirm Deletion</DialogHeader>
+      {/* Edit Sales Record Dialog */}
+      <Dialog open={editDialogOpen} handler={() => setEditDialogOpen(false)}>
+        <DialogHeader>Edit Sales Record</DialogHeader>
         <DialogBody divider>
-          <Typography>Are you sure you want to delete this record?</Typography>
+          <div className="grid gap-4">
+            <Select
+              label="Year"
+              value={formData.year}
+              onChange={(value) => handleSelectChange('year', value)}
+            >
+              {years.map(year => (
+                <Option key={year} value={year}>{year}</Option>
+              ))}
+            </Select>
+            <Select
+              label="Month"
+              value={formData.month}
+              onChange={(value) => handleSelectChange('month', value)}
+            >
+              {months.map(month => (
+                <Option key={month} value={month}>{month}</Option>
+              ))}
+            </Select>
+            <Input
+              type="number"
+              name="salesQuantity"
+              label="Sales Quantity"
+              value={formData.salesQuantity}
+              onChange={handleChange}
+            />
+            <Select
+              label="Product Category"
+              value={formData.productCategory}
+              onChange={(value) => handleSelectChange('productCategory', value)}
+            >
+              {productCategories.map(category => (
+                <Option key={category} value={category}>{category}</Option>
+              ))}
+            </Select>
+            <Select
+              label="Product Brand"
+              value={formData.productBrand}
+              onChange={(value) => handleSelectChange('productBrand', value)}
+            >
+              {productBrands.map(brand => (
+                <Option key={brand} value={brand}>{brand}</Option>
+              ))}
+            </Select>
+            <Select
+              label="Customer Location"
+              value={formData.customerLocation}
+              onChange={(value) => handleSelectChange('customerLocation', value)}
+            >
+              {sriLankanProvinces.map(province => (
+                <Option key={province} value={province}>{province}</Option>
+              ))}
+            </Select>
+          </div>
+        </DialogBody>
+        <DialogFooter>
+          <Button
+            variant="text"
+            color="red"
+            onClick={() => setEditDialogOpen(false)}
+          >
+            <Typography variant="small" color="red" className="font-normal">
+              Cancel
+            </Typography>
+          </Button>
+          <Button
+            variant="gradient"
+            onClick={handleSubmitEdit}
+          >
+            <Typography variant="small" color="white" className="font-normal">
+              Save Changes
+            </Typography>
+          </Button>
+        </DialogFooter>
+      </Dialog>
+
+      {/* Delete Sales Record Dialog */}
+      <Dialog open={deleteDialogOpen} handler={() => setDeleteDialogOpen(false)}>
+        <DialogHeader>Confirm Delete</DialogHeader>
+        <DialogBody divider>
+          <Typography variant="small" color="red" className="font-normal">
+            Are you sure you want to delete this record?
+          </Typography>
         </DialogBody>
         <DialogFooter>
           <Button
@@ -399,14 +406,18 @@ export function SalesRecord() {
             color="red"
             onClick={() => setDeleteDialogOpen(false)}
           >
-            Cancel
+            <Typography variant="small" color="red" className="font-normal">
+              Cancel
+            </Typography>
           </Button>
           <Button
             variant="gradient"
-            color="green"
+            color="red"
             onClick={confirmDelete}
           >
-            Confirm
+            <Typography variant="small" color="white" className="font-normal">
+              Confirm
+            </Typography>
           </Button>
         </DialogFooter>
       </Dialog>
