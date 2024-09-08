@@ -2,7 +2,9 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { MultiLevelSidebar } from './components/sideNavBar';
 import { SalesRecord } from './components/salesRecord';
 import { CustomerRecord } from './components/customerRecord';
-import {SeasonalDemand} from './components/customerDemand';
+import { SalesRecordBarChart } from './components/salesRecordBarChart';
+import { SeasonalDemand } from './components/customerDemand';
+import { SalesRecordPieChart } from './components/salesRecordPieChart';
 
 function App() {
   return (
@@ -11,12 +13,29 @@ function App() {
         {/* Sidebar Component */}
         <MultiLevelSidebar className="w-64 bg-gray-100" />
         
-        {/* Sales Forecasting */}
+        {/* Main Content Area */}
         <main className="flex-1 p-4 overflow-auto">
           <Routes>
-            <Route path="/sales-forecasting" element={<SalesRecord />} />
-            <Route path="/customer-segmentation" element={<CustomerRecord />} />
-            <Route path="/customer-demand-analysis" element={<SeasonalDemand />} />
+            <Route
+              path="/sales-forecasting"
+              element={
+                <>
+                  <SalesRecord />
+                  <br></br>
+                  <SalesRecordBarChart />
+                  <br></br>
+                  <SalesRecordPieChart/>
+                </>
+              }
+            />
+            <Route
+              path="/customer-segmentation"
+              element={<CustomerRecord />}
+            />
+            <Route
+              path="/customer-demand-analysis"
+              element={<SeasonalDemand />}
+            />
           </Routes>
         </main>
       </div>
