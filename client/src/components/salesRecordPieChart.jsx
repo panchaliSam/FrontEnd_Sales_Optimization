@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Bar } from 'react-chartjs-2';
+import { Pie } from 'react-chartjs-2';
 import axios from 'axios';
 import {
   Chart as ChartJS,
   Title,
   Tooltip,
   Legend,
-  BarElement,
-  CategoryScale,
-  LinearScale
+  ArcElement,
 } from 'chart.js';
 
 // Register components
@@ -16,9 +14,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  BarElement,
-  CategoryScale,
-  LinearScale
+  ArcElement,
 );
 
 const productCategories = [
@@ -42,8 +38,8 @@ const months = [
   'December'
 ];
 
-export const SalesRecordBarChart = () => {
-  const [chartData, setChartData] = useState({
+export const SalesRecordPieChart = () => {
+  const [pieData, setPieData] = useState({
     labels: [],
     datasets: [],
   });
@@ -53,7 +49,7 @@ export const SalesRecordBarChart = () => {
   useEffect(() => {
     axios.get('http://localhost:4002/api/salesRecord')
       .then(response => {
-        const data = response.data; // Adjust this depending on the API response format
+        const data = response.data;
 
         // Filter and aggregate sales by product category
         const filteredData = data.filter(item =>
@@ -66,15 +62,17 @@ export const SalesRecordBarChart = () => {
           return categoryData.reduce((total, item) => total + item.salesQuantity, 0);
         });
 
-        setChartData({
+        const totalSales = categorySales.reduce((total, sales) => total + sales, 0);
+
+        // Update Pie Chart data (percentage of each category)
+        setPieData({
           labels: productCategories,
           datasets: [
             {
-              label: `Sales in ${selectedMonth} ${selectedYear}`,
-              data: categorySales,
-              backgroundColor: 'rgba(75,192,192,0.4)',
-              borderColor: 'rgba(75,192,192,1)',
-              borderWidth: 1,
+              label: `Percentage of Sales`,
+              data: categorySales.map(sales => ((sales / totalSales) * 100).toFixed(2)),
+              backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+              hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
             },
           ],
         });
@@ -84,42 +82,8 @@ export const SalesRecordBarChart = () => {
       });
   }, [selectedYear, selectedMonth]);
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-      tooltip: {
-        callbacks: {
-          label: function(context) {
-            return `${context.dataset.label}: ${context.raw}`;
-          }
-        }
-      }
-    },
-    scales: {
-      x: {
-        title: {
-          display: true,
-          text: 'Product Category'
-        }
-      },
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: 'Sales Quantity'
-        }
-      },
-    },
-  };
-
   return (
     <div className="max-w-4xl mx-auto p-4 bg-white shadow-lg rounded-lg">
-      {/* <div className="text-2xl italic font-semibold tracking-wide">
-        S A L E S&nbsp;&nbsp;R E C O R D S
-      </div> */}
       <div className="mb-4">
         <label htmlFor="year" className="block text-sm font-medium text-gray-700">Year</label>
         <select
@@ -146,8 +110,11 @@ export const SalesRecordBarChart = () => {
           ))}
         </select>
       </div>
+
+      {/* Pie Chart Section */}
       <div className="chart-container">
-        <Bar data={chartData} options={options} />
+        <h3 className="text-lg font-semibold mb-2">Percentage of Sales by Product Category</h3>
+        <Pie data={pieData} />
       </div>
     </div>
   );

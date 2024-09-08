@@ -4,6 +4,7 @@ import { SalesRecord } from './components/salesRecord';
 import { CustomerRecord } from './components/customerRecord';
 import { SalesRecordBarChart } from './components/salesRecordBarChart';
 import { SeasonalDemand } from './components/customerDemand';
+import { SalesRecordPieChart } from './components/salesRecordPieChart';
 
 function App() {
   return (
@@ -22,6 +23,8 @@ function App() {
                   <SalesRecord />
                   <br></br>
                   <SalesRecordBarChart />
+                  <br></br>
+                  <SalesRecordPieChart/>
                 </>
               }
             />
