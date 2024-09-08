@@ -49,18 +49,20 @@ export const SalesRecordBarChart = () => {
   });
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(months[new Date().getMonth()]);
+  const [salesDetails, setSalesDetails] = useState([]); // State to store detailed sales data
 
   useEffect(() => {
     axios.get('http://localhost:4002/api/salesRecord')
       .then(response => {
         const data = response.data; // Adjust this depending on the API response format
 
-        // Filter and aggregate sales by product category
+        // Filter and aggregate sales by product category for selected year and month
         const filteredData = data.filter(item =>
           item.year === selectedYear &&
           item.month === selectedMonth
         );
 
+        // Map the sales for each category
         const categorySales = productCategories.map(category => {
           const categoryData = filteredData.filter(item => item.productCategory === category);
           return categoryData.reduce((total, item) => total + item.salesQuantity, 0);
@@ -78,6 +80,10 @@ export const SalesRecordBarChart = () => {
             },
           ],
         });
+
+        // Set sales details for rendering under the chart
+        setSalesDetails(filteredData);
+
       })
       .catch(error => {
         console.error("Error fetching data: ", error);
@@ -117,9 +123,6 @@ export const SalesRecordBarChart = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-4 bg-white shadow-lg rounded-lg">
-      {/* <div className="text-2xl italic font-semibold tracking-wide">
-        S A L E S&nbsp;&nbsp;R E C O R D S
-      </div> */}
       <div className="mb-4">
         <label htmlFor="year" className="block text-sm font-medium text-gray-700">Year</label>
         <select
@@ -148,6 +151,19 @@ export const SalesRecordBarChart = () => {
       </div>
       <div className="chart-container">
         <Bar data={chartData} options={options} />
+      </div>
+
+      {/* Detailed sales data */}
+      <div className="mt-8">
+        <h3 className="text-lg font-bold mb-4">Sales Details for {selectedMonth} {selectedYear}</h3>
+        <ul>
+          {salesDetails.map((item, index) => (
+            <li key={index} className="text-sm mb-2">
+              <span className="font-semibold">{item.year} {item.month} {item.productCategory}: </span>
+              {item.salesQuantity} units sold
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
