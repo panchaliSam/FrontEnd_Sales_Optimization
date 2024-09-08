@@ -57,6 +57,7 @@ export const SalesRecordPieChart = () => {
           item.month === selectedMonth
         );
 
+        // Calculate total sales for each category
         const categorySales = productCategories.map(category => {
           const categoryData = filteredData.filter(item => item.productCategory === category);
           return categoryData.reduce((total, item) => total + item.salesQuantity, 0);
@@ -64,13 +65,18 @@ export const SalesRecordPieChart = () => {
 
         const totalSales = categorySales.reduce((total, sales) => total + sales, 0);
 
+        // Safeguard against division by zero if there are no sales
+        const percentageSales = totalSales > 0 
+          ? categorySales.map(sales => ((sales / totalSales) * 100).toFixed(2)) 
+          : categorySales.map(() => 0);
+
         // Update Pie Chart data (percentage of each category)
         setPieData({
           labels: productCategories,
           datasets: [
             {
               label: `Percentage of Sales`,
-              data: categorySales.map(sales => ((sales / totalSales) * 100).toFixed(2)),
+              data: percentageSales,
               backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
               hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
             },
@@ -82,39 +88,80 @@ export const SalesRecordPieChart = () => {
       });
   }, [selectedYear, selectedMonth]);
 
+  const pieOptions = {
+    plugins: {
+      legend: {
+        display: false, // Hide the default legend
+      },
+      tooltip: {
+        callbacks: {
+          label: (tooltipItem) => {
+            return `${tooltipItem.label}: ${tooltipItem.raw}%`;
+          },
+        },
+      },
+    },
+    responsive: true,
+    maintainAspectRatio: false,
+  };
+
   return (
-    <div className="max-w-4xl mx-auto p-4 bg-white shadow-lg rounded-lg">
-      <div className="mb-4">
-        <label htmlFor="year" className="block text-sm font-medium text-gray-700">Year</label>
-        <select
-          id="year"
-          value={selectedYear}
-          onChange={(e) => setSelectedYear(Number(e.target.value))}
-          className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-        >
-          {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map(year => (
-            <option key={year} value={year}>{year}</option>
-          ))}
-        </select>
-      </div>
-      <div className="mb-4">
-        <label htmlFor="month" className="block text-sm font-medium text-gray-700">Month</label>
-        <select
-          id="month"
-          value={selectedMonth}
-          onChange={(e) => setSelectedMonth(e.target.value)}
-          className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-        >
-          {months.map(month => (
-            <option key={month} value={month}>{month}</option>
-          ))}
-        </select>
+    <div className="flex flex-wrap max-w-4xl mx-auto p-4 bg-white shadow-lg rounded-lg">
+      {/* Control Panel */}
+      <div className="w-full md:w-1/3 lg:w-1/4 p-4">
+        <div className="mb-4">
+          <label htmlFor="year" className="block text-sm font-medium text-gray-700">Year</label>
+          <select
+            id="year"
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(Number(e.target.value))}
+            className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          >
+            {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map(year => (
+              <option key={year} value={year}>{year}</option>
+            ))}
+          </select>
+        </div>
+        <div className="mb-4">
+          <label htmlFor="month" className="block text-sm font-medium text-gray-700">Month</label>
+          <select
+            id="month"
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+            className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          >
+            {months.map(month => (
+              <option key={month} value={month}>{month}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      {/* Pie Chart Section */}
-      <div className="chart-container">
-        <h3 className="text-lg font-semibold mb-2">Percentage of Sales by Product Category</h3>
-        <Pie data={pieData} />
+      {/* Chart and Color Palette Section */}
+      <div className="flex flex-grow p-4">
+        {/* Pie Chart */}
+        <div className="w-full md:w-2/3 lg:w-2/3 p-4">
+          {/* <h3 className="text-lg font-semibold mb-2">Percentage of Sales by Product Category</h3> */}
+          <div className="chart-container" style={{ width: '100%', height: '500px' }}>
+            <Pie data={pieData} options={pieOptions} />
+          </div>
+        </div>
+
+        {/* Color Palette */}
+        <div className="w-full md:w-1/3 lg:w-1/3 p-4">
+          {/* <h3 className="text-lg font-semibold mb-2">Color Palette</h3> */}
+          <div className="space-y-2">
+            {productCategories.map((category, index) => (
+              <div key={category} className="flex items-center">
+                <div 
+                  className="w-6 h-6 mr-2"
+                  style={{ backgroundColor: pieData.datasets[0]?.backgroundColor[index] }}
+                ></div>
+                <span>{category}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
