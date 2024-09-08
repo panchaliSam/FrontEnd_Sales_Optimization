@@ -206,19 +206,12 @@ export function CustomerRecord() {
       </CardBody>
 
       <CardFooter className="flex items-center justify-between border-t p-4">
-        <div className="flex gap-2">
-          <Button
-            variant="filled"
-            size="sm"
-            className="bg-green-500 hover:bg-green-600"
-            onClick={() => setAddDialogOpen(true)}
-          >
-            Add
-          </Button>
-          <Button variant="filled" size="sm" className="bg-blue-500 hover:bg-blue-600">
-            Download CSV
-          </Button>
-        </div>
+        {/* <Typography variant="small" color="blue-gray" className="font-normal">
+          Total Records: {salesRecords.length}
+        </Typography> */}
+        <Button onClick={() => setAddDialogOpen(true)} variant="gradient">
+          Add Customer Record
+        </Button>
       </CardFooter>
 
       {/* Edit Customer Record Dialog */}

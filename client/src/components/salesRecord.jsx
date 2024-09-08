@@ -224,9 +224,9 @@ export function SalesRecord() {
       </CardBody>
 
       <CardFooter className="flex items-center justify-between border-t p-4">
-        <Typography variant="small" color="blue-gray" className="font-normal">
+        {/* <Typography variant="small" color="blue-gray" className="font-normal">
           Total Records: {salesRecords.length}
-        </Typography>
+        </Typography> */}
         <Button onClick={() => setAddDialogOpen(true)} variant="gradient">
           Add Sales Record
         </Button>

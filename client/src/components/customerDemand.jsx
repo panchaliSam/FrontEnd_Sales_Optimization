@@ -207,22 +207,9 @@ export function SeasonalDemand() {
       </CardBody>
 
       <CardFooter className="flex items-center justify-between border-t p-4">
-        <Typography variant="small" color="blue-gray" className="font-normal">
-          {/* Page 1 of 10 */}
-        </Typography>
-        <div className="flex gap-2">
-          <Button
-            variant="filled"
-            size="sm"
-            className="bg-green-500 hover:bg-green-600"
-            onClick={() => setAddDialogOpen(true)}
-          >
-            Add
-          </Button>
-          <Button variant="filled" size="sm" className="bg-blue-500 hover:bg-blue-600">
-            Download CSV
-          </Button>
-        </div>
+        <Button onClick={() => setAddDialogOpen(true)} variant="gradient">
+          Add Seasonal Demand Record
+        </Button>
       </CardFooter>
 
       {/* Edit Seasonal Demand Dialog */}
@@ -278,15 +265,15 @@ export function SeasonalDemand() {
                 value={formData.averageTotalValue}
                 onChange={handleChange}
               />
-              <Select
-                label="Promotional Effect"
-                name="promotionalEffect"
-                value={formData.promotionalEffect}
-                onChange={(e) => handleSelectChange('promotionalEffect', e.target.value === 'true')}
-              >
-                <Option value="true">Yes</Option>
-                <Option value="false">No</Option>
-              </Select>
+              <div className="flex items-center">
+                <label className="mr-3">Promotional Effect</label>
+                <input
+                  type="checkbox"
+                  name="promotionalEffect"
+                  checked={formData.promotionalEffect}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
           </form>
         </DialogBody>
@@ -295,11 +282,12 @@ export function SeasonalDemand() {
             variant="text"
             color="red"
             onClick={() => setEditDialogOpen(false)}
+            className="mr-1"
           >
             Cancel
           </Button>
           <Button
-            variant="filled"
+            variant="gradient"
             color="green"
             onClick={handleSubmitEdit}
           >
@@ -361,15 +349,15 @@ export function SeasonalDemand() {
                 value={formData.averageTotalValue}
                 onChange={handleChange}
               />
-              <Select
-                label="Promotional Effect"
-                name="promotionalEffect"
-                value={formData.promotionalEffect}
-                onChange={(e) => handleSelectChange('promotionalEffect', e.target.value === 'true')}
-              >
-                <Option value="true">Yes</Option>
-                <Option value="false">No</Option>
-              </Select>
+              <div className="flex items-center">
+                <label className="mr-3">Promotional Effect</label>
+                <input
+                  type="checkbox"
+                  name="promotionalEffect"
+                  checked={formData.promotionalEffect}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
           </form>
         </DialogBody>
@@ -378,11 +366,12 @@ export function SeasonalDemand() {
             variant="text"
             color="red"
             onClick={() => setAddDialogOpen(false)}
+            className="mr-1"
           >
             Cancel
           </Button>
           <Button
-            variant="filled"
+            variant="gradient"
             color="green"
             onClick={handleSubmitAdd}
           >
@@ -395,15 +384,9 @@ export function SeasonalDemand() {
       <Dialog
         open={deleteDialogOpen}
         handler={() => setDeleteDialogOpen(false)}
-        animate={{
-          mount: { scale: 1, y: 0 },
-          unmount: { scale: 0.9, y: -100 },
-        }}
       >
         <DialogHeader>Confirm Deletion</DialogHeader>
-        <DialogBody divider>
-          Are you sure you want to delete this seasonal demand record?
-        </DialogBody>
+        <DialogBody>Are you sure you want to delete this record?</DialogBody>
         <DialogFooter>
           <Button
             variant="text"
@@ -413,7 +396,7 @@ export function SeasonalDemand() {
             Cancel
           </Button>
           <Button
-            variant="filled"
+            variant="gradient"
             color="green"
             onClick={confirmDelete}
           >
@@ -424,3 +407,5 @@ export function SeasonalDemand() {
     </Card>
   );
 }
+
+export default SeasonalDemand;
