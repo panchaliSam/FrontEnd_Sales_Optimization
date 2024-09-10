@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import {
   Card,
   Typography,
@@ -23,9 +23,17 @@ import { ChevronRightIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 
 export function MultiLevelSidebar() {
   const [open, setOpen] = React.useState(0);
+  const navigate = useNavigate(); 
 
   const handleOpen = (value) => {
     setOpen(open === value ? 0 : value);
+  };
+
+  const handleLogout = () => {
+    
+    localStorage.removeItem('token');
+  
+    navigate('/login');
   };
 
   return (
@@ -114,7 +122,7 @@ export function MultiLevelSidebar() {
             </ListItemPrefix>
             Settings
           </ListItem> */}
-          <ListItem>
+          <ListItem button onClick={handleLogout}>
             <ListItemPrefix>
               <PowerIcon className="h-5 w-5" />
             </ListItemPrefix>
