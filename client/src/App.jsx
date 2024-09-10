@@ -1,46 +1,73 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { MultiLevelSidebar } from './components/sideNavBar';
 import { SalesRecord } from './components/salesRecord';
 import { CustomerRecord } from './components/customerRecord';
 import { SalesRecordBarChart } from './components/salesRecordBarChart';
 import { SeasonalDemand } from './components/customerDemand';
 import { SalesRecordPieChart } from './components/salesRecordPieChart';
+import Login from './components/login'; 
 
 function App() {
-  return (
-    <BrowserRouter>
-      <div className="flex h-screen">
-        {/* Sidebar Component */}
-        <MultiLevelSidebar className="w-64 bg-gray-100" />
-        
-        {/* Main Content Area */}
-        <main className="flex-1 p-4 overflow-auto">
-          <Routes>
-            <Route
-              path="/sales-forecasting"
-              element={
-                <>
-                  <SalesRecord />
-                  <br></br>
-                  <SalesRecordBarChart />
-                  <br></br>
-                  <SalesRecordPieChart/>
-                </>
-              }
-            />
-            <Route
-              path="/customer-segmentation"
-              element={<CustomerRecord />}
-            />
-            <Route
-              path="/customer-demand-analysis"
-              element={<SeasonalDemand />}
-            />
-          </Routes>
-        </main>
-      </div>
-    </BrowserRouter>
-  );
+    // Function to check if the user is authenticated
+    const isAuthenticated = () => {
+        return !!localStorage.getItem('token'); 
+    };
+
+    return (
+        <BrowserRouter>
+            <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<Navigate to="/login" />} />
+                <Route path="/login" element={<Login />} />
+
+                {/* Protected Routes */}
+                <Route
+                    path="/dashboard/*"
+                    element={isAuthenticated() ? (
+                        <div className="flex h-screen">
+                            {/* Sidebar Component */}
+                            <MultiLevelSidebar className="w-64 bg-gray-100" />
+
+                            {/* Main Content Area */}
+                            <main className="flex-1 p-4 overflow-auto">
+                                <Routes>
+                                    <Route
+                                        path="sales-forecasting"
+                                        element={
+                                            <>
+                                                <SalesRecord />
+                                                <br />
+                                                <SalesRecordBarChart />
+                                                <br />
+                                                <SalesRecordPieChart />
+                                            </>
+                                        }
+                                    />
+                                    <Route
+                                        path="customer-segmentation"
+                                        element={<CustomerRecord />}
+                                    />
+                                    <Route
+                                        path="customer-demand-analysis"
+                                        element={<SeasonalDemand />}
+                                    />
+                                    <Route
+                                        path="*"
+                                        element={<Navigate to="/dashboard/sales-forecasting" />}
+                                    />
+                                </Routes>
+                            </main>
+                        </div>
+                    ) : (
+                        <Navigate to="/login" />
+                    )}
+                />
+
+                {/* Redirect to login for any unknown paths */}
+                <Route path="*" element={<Navigate to="/login" />} />
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 export default App;
