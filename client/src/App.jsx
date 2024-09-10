@@ -5,6 +5,9 @@ import { CustomerRecord } from './components/customerRecord';
 import { SalesRecordBarChart } from './components/salesRecordBarChart';
 import { SeasonalDemand } from './components/customerDemand';
 import { SalesRecordPieChart } from './components/salesRecordPieChart';
+import { CustomerRecordBarChart } from './components/customerRecordBarChart';
+import { CustomerRecordPieChart } from './components/customerRecordPieChart';
+
 
 function App() {
   return (
@@ -30,7 +33,15 @@ function App() {
             />
             <Route
               path="/customer-segmentation"
-              element={<CustomerRecord />}
+              element={
+                <>
+                  <CustomerRecord />
+                  <br></br>
+                  <CustomerRecordBarChart />
+                  <br></br>
+                  <CustomerRecordPieChart />
+                </>
+              }
             />
             <Route
               path="/customer-demand-analysis"
