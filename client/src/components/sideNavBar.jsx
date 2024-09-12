@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import {
   Card,
   Typography,
@@ -23,9 +23,17 @@ import { ChevronRightIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 
 export function MultiLevelSidebar() {
   const [open, setOpen] = React.useState(0);
+  const navigate = useNavigate(); 
 
   const handleOpen = (value) => {
     setOpen(open === value ? 0 : value);
+  };
+
+  const handleLogout = () => {
+    
+    localStorage.removeItem('token');
+  
+    navigate('/login');
   };
 
   return (
@@ -58,7 +66,7 @@ export function MultiLevelSidebar() {
             </ListItem>
             <AccordionBody className="py-1">
               <List className="p-0">
-                <Link to="/sales-forecasting" className="block">
+                <Link to="/dashboard/sales-forecasting" className="block">
                   <ListItem>
                     <ListItemPrefix>
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
@@ -66,7 +74,7 @@ export function MultiLevelSidebar() {
                     Sales Forecasting
                   </ListItem>
                 </Link>
-                <Link to="/customer-segmentation" className="block">
+                <Link to="/dashboard/customer-segmentation" className="block">
                   <ListItem>
                     <ListItemPrefix>
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
@@ -74,7 +82,7 @@ export function MultiLevelSidebar() {
                     Customer Segmentation
                   </ListItem>
                 </Link>
-                <Link to="/customer-demand-analysis" className="block">
+                <Link to="/dashboard/customer-demand-analysis" className="block">
                   <ListItem>
                     <ListItemPrefix>
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
@@ -82,7 +90,7 @@ export function MultiLevelSidebar() {
                     Customer Demand Analysis
                   </ListItem>
                 </Link>
-                <Link to="/customer-demand" className="block">
+                <Link to="/dashboard/customer-demand" className="block">
                   <ListItem>                
                     <ListItemPrefix>
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
@@ -93,7 +101,7 @@ export function MultiLevelSidebar() {
               </List>
             </AccordionBody>
           </Accordion>
-          <ListItem>
+          {/* <ListItem>
             <ListItemPrefix>
               <InboxIcon className="h-5 w-5" />
             </ListItemPrefix>
@@ -101,20 +109,20 @@ export function MultiLevelSidebar() {
             <ListItemSuffix>
               <Chip value="14" size="sm" variant="ghost" color="blue-gray" className="rounded-full" />
             </ListItemSuffix>
-          </ListItem>
+          </ListItem> */}
           <ListItem>
             <ListItemPrefix>
               <UserCircleIcon className="h-5 w-5" />
             </ListItemPrefix>
             Profile
           </ListItem>
-          <ListItem>
+          {/* <ListItem>
             <ListItemPrefix>
               <Cog6ToothIcon className="h-5 w-5" />
             </ListItemPrefix>
             Settings
-          </ListItem>
-          <ListItem>
+          </ListItem> */}
+          <ListItem button onClick={handleLogout}>
             <ListItemPrefix>
               <PowerIcon className="h-5 w-5" />
             </ListItemPrefix>
