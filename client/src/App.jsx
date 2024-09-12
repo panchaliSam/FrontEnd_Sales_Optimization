@@ -5,6 +5,7 @@ import { CustomerRecord } from './components/customerRecord';
 import { SalesRecordBarChart } from './components/salesRecordBarChart';
 import { SeasonalDemand } from './components/customerDemand';
 import { SalesRecordPieChart } from './components/salesRecordPieChart';
+
 import Login from './components/login'; 
 
 function App() {
