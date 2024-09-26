@@ -119,7 +119,7 @@ export function CustomerRecord() {
     }
   };
 
-  const handleSubmitAdd = async (formData) => {
+  const handleSubmitAdd = async () => {
     try {
       const response = await axios.post('http://localhost:4002/api/customerRecord', formData);
       setCustomerRecords([...customerRecords, response.data]);
@@ -129,6 +129,18 @@ export function CustomerRecord() {
       alert('Failed to add customer record.');
     } finally {
       setAddDialogOpen(false);
+      setFormData({
+        name: '',
+        email: '',
+        age: '',
+        location: '',
+        totalPurchases: 0,
+        purchaseFrequency: 0,
+        averageSpendingPerOrder: 0,
+        productCategory: '',
+        customerSegment: 'New',
+        lastPurchaseDate: ''
+      }); // Reset form data
     }
   };
 
@@ -206,9 +218,6 @@ export function CustomerRecord() {
       </CardBody>
 
       <CardFooter className="flex items-center justify-between border-t p-4">
-        {/* <Typography variant="small" color="blue-gray" className="font-normal">
-          Total Records: {salesRecords.length}
-        </Typography> */}
         <Button onClick={() => setAddDialogOpen(true)} variant="gradient">
           Add Customer Record
         </Button>
@@ -252,10 +261,8 @@ export function CustomerRecord() {
               value={formData.location}
               onChange={(e) => setFormData({ ...formData, location: e })}
             >
-              {sriLankanProvinces.map((province, idx) => (
-                <Option key={idx} value={province}>
-                  {province}
-                </Option>
+              {sriLankanProvinces.map((province) => (
+                <Option key={province} value={province}>{province}</Option>
               ))}
             </Select>
             <Input
@@ -274,7 +281,7 @@ export function CustomerRecord() {
             />
             <Input
               type="number"
-              label="Average Spending per Order"
+              label="Average Spending Per Order"
               name="averageSpendingPerOrder"
               value={formData.averageSpendingPerOrder}
               onChange={handleChange}
@@ -285,10 +292,8 @@ export function CustomerRecord() {
               value={formData.productCategory}
               onChange={(e) => setFormData({ ...formData, productCategory: e })}
             >
-              {productCategories.map((category, idx) => (
-                <Option key={idx} value={category}>
-                  {category}
-                </Option>
+              {productCategories.map((category) => (
+                <Option key={category} value={category}>{category}</Option>
               ))}
             </Select>
             <Select
@@ -297,10 +302,8 @@ export function CustomerRecord() {
               value={formData.customerSegment}
               onChange={(e) => setFormData({ ...formData, customerSegment: e })}
             >
-              {customerTypes.map((type, idx) => (
-                <Option key={idx} value={type}>
-                  {type}
-                </Option>
+              {customerTypes.map((type) => (
+                <Option key={type} value={type}>{type}</Option>
               ))}
             </Select>
             <Input
@@ -313,17 +316,10 @@ export function CustomerRecord() {
           </div>
         </DialogBody>
         <DialogFooter>
-          <Button
-            variant="text"
-            color="red"
-            onClick={() => setEditDialogOpen(false)}
-            className="mr-1"
-          >
+          <Button variant="text" color="red" onClick={() => setEditDialogOpen(false)}>
             Cancel
           </Button>
-          <Button variant="gradient" color="green" onClick={handleSubmitEdit}>
-            Save Changes
-          </Button>
+          <Button onClick={handleSubmitEdit} variant="gradient">Update</Button>
         </DialogFooter>
       </Dialog>
 
@@ -336,24 +332,15 @@ export function CustomerRecord() {
           unmount: { scale: 0.9, y: -100 },
         }}
       >
-        <DialogHeader>Are you sure you want to delete this record?</DialogHeader>
-        <DialogBody>
-          <Typography>
-            This action cannot be undone. Once deleted, the customer record will be permanently removed.
-          </Typography>
+        <DialogHeader>Delete Customer Record</DialogHeader>
+        <DialogBody divider>
+          Are you sure you want to delete this customer record?
         </DialogBody>
         <DialogFooter>
-          <Button
-            variant="text"
-            color="red"
-            onClick={() => setDeleteDialogOpen(false)}
-            className="mr-1"
-          >
+          <Button variant="text" color="red" onClick={() => setDeleteDialogOpen(false)}>
             Cancel
           </Button>
-          <Button variant="gradient" color="red" onClick={confirmDelete}>
-            Confirm
-          </Button>
+          <Button onClick={confirmDelete} variant="gradient">Confirm</Button>
         </DialogFooter>
       </Dialog>
 
@@ -366,7 +353,7 @@ export function CustomerRecord() {
           unmount: { scale: 0.9, y: -100 },
         }}
       >
-        <DialogHeader>Add New Customer Record</DialogHeader>
+        <DialogHeader>Add Customer Record</DialogHeader>
         <DialogBody divider>
           <div className="grid grid-cols-1 gap-4">
             <Input
@@ -374,6 +361,7 @@ export function CustomerRecord() {
               name="name"
               value={formData.name}
               onChange={handleChange}
+              required
             />
             <Input
               type="email"
@@ -381,6 +369,7 @@ export function CustomerRecord() {
               name="email"
               value={formData.email}
               onChange={handleChange}
+              required
             />
             <Input
               type="number"
@@ -388,17 +377,17 @@ export function CustomerRecord() {
               name="age"
               value={formData.age}
               onChange={handleChange}
+              required
             />
             <Select
               label="Location"
               name="location"
               value={formData.location}
               onChange={(e) => setFormData({ ...formData, location: e })}
+              required
             >
-              {sriLankanProvinces.map((province, idx) => (
-                <Option key={idx} value={province}>
-                  {province}
-                </Option>
+              {sriLankanProvinces.map((province) => (
+                <Option key={province} value={province}>{province}</Option>
               ))}
             </Select>
             <Input
@@ -407,6 +396,7 @@ export function CustomerRecord() {
               name="totalPurchases"
               value={formData.totalPurchases}
               onChange={handleChange}
+              required
             />
             <Input
               type="number"
@@ -414,24 +404,25 @@ export function CustomerRecord() {
               name="purchaseFrequency"
               value={formData.purchaseFrequency}
               onChange={handleChange}
+              required
             />
             <Input
               type="number"
-              label="Average Spending per Order"
+              label="Average Spending Per Order"
               name="averageSpendingPerOrder"
               value={formData.averageSpendingPerOrder}
               onChange={handleChange}
+              required
             />
             <Select
               label="Product Category"
               name="productCategory"
               value={formData.productCategory}
               onChange={(e) => setFormData({ ...formData, productCategory: e })}
+              required
             >
-              {productCategories.map((category, idx) => (
-                <Option key={idx} value={category}>
-                  {category}
-                </Option>
+              {productCategories.map((category) => (
+                <Option key={category} value={category}>{category}</Option>
               ))}
             </Select>
             <Select
@@ -439,11 +430,10 @@ export function CustomerRecord() {
               name="customerSegment"
               value={formData.customerSegment}
               onChange={(e) => setFormData({ ...formData, customerSegment: e })}
+              required
             >
-              {customerTypes.map((type, idx) => (
-                <Option key={idx} value={type}>
-                  {type}
-                </Option>
+              {customerTypes.map((type) => (
+                <Option key={type} value={type}>{type}</Option>
               ))}
             </Select>
             <Input
@@ -452,25 +442,15 @@ export function CustomerRecord() {
               name="lastPurchaseDate"
               value={formData.lastPurchaseDate}
               onChange={handleChange}
+              required
             />
           </div>
         </DialogBody>
         <DialogFooter>
-          <Button
-            variant="text"
-            color="red"
-            onClick={() => setAddDialogOpen(false)}
-            className="mr-1"
-          >
+          <Button variant="text" color="red" onClick={() => setAddDialogOpen(false)}>
             Cancel
           </Button>
-          <Button
-            variant="gradient"
-            color="green"
-            onClick={() => handleSubmitAdd(formData)}
-          >
-            Add Customer
-          </Button>
+          <Button onClick={handleSubmitAdd} variant="gradient">Add</Button>
         </DialogFooter>
       </Dialog>
     </Card>

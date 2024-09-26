@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 import axios from 'axios';
+import jsPDF from 'jspdf';
 import {
   Chart as ChartJS,
   Title,
@@ -56,6 +57,27 @@ export const CustomerRecordBarChart = () => {
       .catch(error => console.error("Error fetching data:", error));
   }, [selectedProvince]);
 
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.text(`Customer Segments in ${selectedProvince}`, 14, 20);
+    doc.setFontSize(12);
+    
+    // Add a header for the table
+    doc.text('Segment', 14, 30);
+    doc.text('Count', 120, 30);
+    doc.line(14, 32, 180, 32); // Horizontal line
+
+    // Add the chart data to the PDF
+    chartData.labels.forEach((label, index) => {
+      const y = 40 + index * 10;
+      doc.text(label, 14, y);
+      doc.text(chartData.datasets[0].data[index].toString(), 120, y);
+    });
+
+    doc.save(`Customer_Segments_${selectedProvince}.pdf`);
+  };
+
   const options = {
     responsive: true,
     plugins: {
@@ -104,6 +126,9 @@ export const CustomerRecordBarChart = () => {
       </div>
       <div className='chart-container'>
         <Bar data={chartData} options={options} />
+      </div>
+      <div className="mt-4">
+        <button onClick={exportToPDF} className="px-4 py-2 bg-blue-500 text-white rounded">Download Records</button>
       </div>
     </div>
   );
