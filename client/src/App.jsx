@@ -7,6 +7,8 @@ import { SeasonalDemand } from './components/customerDemand';
 import { SalesRecordPieChart } from './components/salesRecordPieChart';
 import { CustomerRecordBarChart } from './components/customerRecordBarChart';
 import { CustomerRecordPieChart } from './components/customerRecordPieChart';
+import { SeasonalDemandBarChart} from './components/customerDemandBarChart';
+import { SeasonalDemandPieChart } from './components/customerDemandPieChart';
 
 import Login from './components/login'; 
 
@@ -59,7 +61,14 @@ function App() {
                                     />
                                     <Route
                                         path="customer-demand-analysis"
-                                        element={<SeasonalDemand />}
+                                        element={
+                                        <> 
+                                        <SeasonalDemand /> 
+                                        <br/>
+                                        <SeasonalDemandBarChart />
+                                        <br/>
+                                        <SeasonalDemandPieChart/>
+                                        </>}
                                     />
                                     <Route
                                         path="*"

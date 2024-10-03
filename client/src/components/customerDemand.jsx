@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
   Card,
@@ -27,6 +27,7 @@ const sriLankanSeasons = [
   'Women\'s Day',
   'Valentine\'s Day'
 ];
+
 
 export function SeasonalDemand() {
   const [seasonalDemands, setSeasonalDemands] = useState([]);
@@ -120,18 +121,48 @@ export function SeasonalDemand() {
     }
   };
 
+  // const handleSubmitAdd = async () => {
+  //   try {
+  //     await axios.post('http://localhost:4002/api/seasonalDemand', formData);
+  //     setSeasonalDemands([...seasonalDemands, formData]);
+  //     alert('Seasonal demand record added successfully');
+  //   } catch (error) {
+  //     console.error('Error adding seasonal demand record:', error);
+  //     alert('Failed to add seasonal demand record.');
+  //   } finally {
+  //     setAddDialogOpen(false);
+  //   }
+  // };
+  // const handleSubmitAdd = async () => {
+  //   console.log(formData); // Add this to check the formData before submission
+  //   try {
+  //     await axios.post('http://localhost:4002/api/seasonalDemand', formData);
+  //     setSeasonalDemands([...seasonalDemands, formData]);
+  //     alert('Seasonal demand record added successfully');
+  //   } catch (error) {
+  //     console.error('Error adding seasonal demand record:', error.response.data); // Check for detailed error response
+  //     alert('Failed to add seasonal demand record.');
+  //   } finally {
+  //     setAddDialogOpen(false);
+  //   }
+  // };
   const handleSubmitAdd = async () => {
+    console.log("Form data:", formData);  // Add this line to check the form data
+  
     try {
       await axios.post('http://localhost:4002/api/seasonalDemand', formData);
       setSeasonalDemands([...seasonalDemands, formData]);
       alert('Seasonal demand record added successfully');
     } catch (error) {
-      console.error('Error adding seasonal demand record:', error);
+      console.error('Error adding seasonal demand record:', error.response.data);  // Log the response
       alert('Failed to add seasonal demand record.');
     } finally {
       setAddDialogOpen(false);
     }
   };
+  
+  
+  
 
   if (loading) return <div className="p-4">Loading...</div>;
   if (error) return <div className="p-4 text-red-600">{error}</div>;
@@ -244,6 +275,8 @@ export function SeasonalDemand() {
                 value={formData.year}
                 onChange={handleChange}
               />
+              
+               
               <Input
                 type="number"
                 label="No of Transactions"
@@ -313,7 +346,7 @@ export function SeasonalDemand() {
                 label="Season"
                 name="season"
                 value={formData.season}
-                onChange={(e) => handleSelectChange('season', e.target.value)}
+                onChange={(value) => handleSelectChange('season', value)}
               >
                 {sriLankanSeasons.map(season => (
                   <Option key={season} value={season}>
@@ -328,6 +361,7 @@ export function SeasonalDemand() {
                 value={formData.year}
                 onChange={handleChange}
               />
+              
               <Input
                 type="number"
                 label="No of Transactions"
