@@ -10,6 +10,8 @@ import {
   CategoryScale,
   LinearScale
 } from 'chart.js';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 // Register components
 ChartJS.register(
@@ -49,20 +51,18 @@ export const SalesRecordBarChart = () => {
   });
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(months[new Date().getMonth()]);
-  const [salesDetails, setSalesDetails] = useState([]); // State to store detailed sales data
+  const [salesDetails, setSalesDetails] = useState([]);
 
   useEffect(() => {
     axios.get('http://localhost:4002/api/salesRecord')
       .then(response => {
-        const data = response.data; // Adjust this depending on the API response format
+        const data = response.data;
 
-        // Filter and aggregate sales by product category for selected year and month
         const filteredData = data.filter(item =>
           item.year === selectedYear &&
           item.month === selectedMonth
         );
 
-        // Map the sales for each category
         const categorySales = productCategories.map(category => {
           const categoryData = filteredData.filter(item => item.productCategory === category);
           return categoryData.reduce((total, item) => total + item.salesQuantity, 0);
@@ -81,7 +81,6 @@ export const SalesRecordBarChart = () => {
           ],
         });
 
-        // Set sales details for rendering under the chart
         setSalesDetails(filteredData);
 
       })
@@ -121,6 +120,17 @@ export const SalesRecordBarChart = () => {
     },
   };
 
+  const downloadPDF = () => {
+    const chartContainer = document.querySelector('.chart-container');
+
+    html2canvas(chartContainer).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('landscape');
+      pdf.addImage(imgData, 'PNG', 10, 10, 280, 150); // Adjust dimensions as needed
+      pdf.save(`Sales_Report_${selectedMonth}_${selectedYear}.pdf`);
+    });
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-4 bg-white shadow-lg rounded-lg">
       <div className="mb-4">
@@ -153,7 +163,6 @@ export const SalesRecordBarChart = () => {
         <Bar data={chartData} options={options} />
       </div>
 
-      {/* Detailed sales data */}
       <div className="mt-8">
         <h3 className="text-lg font-bold mb-4">Sales Details for {selectedMonth} {selectedYear}</h3>
         <ul>
@@ -164,6 +173,16 @@ export const SalesRecordBarChart = () => {
             </li>
           ))}
         </ul>
+      </div>
+
+      {/* Footer with download button */}
+      <div className="mt-8 flex justify-end">
+        <button
+          onClick={downloadPDF}
+          className="bg-indigo-600 text-white px-4 py-2 rounded shadow-md hover:bg-indigo-700 focus:outline-none"
+        >
+          Download PDF
+        </button>
       </div>
     </div>
   );

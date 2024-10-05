@@ -36,12 +36,16 @@ const years = Array.from({ length: currentYear - 1999 }, (_, i) => currentYear -
 export function SalesRecord() {
   const [salesRecords, setSalesRecords] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [recordToEdit, setRecordToEdit] = useState(null);
   const [recordToDelete, setRecordToDelete] = useState(null);
+  const [isSorted, setIsSorted] = useState(false);
+  const [predictiveData, setPredictiveData] = useState([]);
+  const [predictiveModalOpen, setPredictiveModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     year: '',
     month: '',
@@ -131,8 +135,8 @@ export function SalesRecord() {
 
   const handleSubmitAdd = async () => {
     try {
-      await axios.post('http://localhost:4002/api/salesRecord', formData);
-      setSalesRecords([...salesRecords, formData]);
+      const response = await axios.post('http://localhost:4002/api/salesRecord', formData);
+      setSalesRecords([...salesRecords, response.data]); // Use response.data to get the added record
       alert('Sales record added successfully');
     } catch (error) {
       console.error('Error adding sales record:', error);
@@ -150,6 +154,72 @@ export function SalesRecord() {
     }
   };
 
+  const handleDownloadCSV = () => {
+    const headers = ["Year", "Month", "Sales Quantity", "Product Category", "Product Brand", "Customer Location"];
+    const csvRows = salesRecords.map(record => [
+      record.year,
+      record.month,
+      record.salesQuantity,
+      record.productCategory,
+      record.productBrand,
+      record.customerLocation
+    ]);
+  
+    const csvContent = [
+      headers.join(","),
+      ...csvRows.map(row => row.join(","))
+    ].join("\n");
+  
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "sales_records.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Function to handle search input
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  // Function to filter data based on search input
+  const filteredData = salesRecords.filter(record => 
+    Object.values(record).some((value) =>
+      value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  );
+
+  const handleSort = () => {
+    const sortedRecords = [...filteredData].sort((a, b) => {
+      const yearA = a.year;
+      const yearB = b.year;
+      const monthA = months.indexOf(a.month);
+      const monthB = months.indexOf(b.month);
+      if (yearA === yearB) {
+        return monthA - monthB;
+      }
+      return yearA - yearB;
+    });
+    setSalesRecords(sortedRecords);
+    setIsSorted(true);
+  };
+
+  const fetchPredictiveData = async () => {
+    try {
+        const response = await axios.get('http://localhost:4002/api/salesRecord/quantity/predictiveData');
+        console.log('Predictive Data Response:', response.data); // Log response
+        setPredictiveData(response.data);
+        setPredictiveModalOpen(true);
+    } catch (error) {
+        console.error('Error fetching predictive data:', error);
+        alert('Failed to fetch predictive data.');
+    }
+};
+
+
   if (loading) return <div className="p-4">Loading...</div>;
   if (error) return <div className="p-4 text-red-600">{error}</div>;
 
@@ -160,11 +230,16 @@ export function SalesRecord() {
           <Typography variant="h5" className="italic">
             S A L E S&nbsp;&nbsp;R E C O R D S
           </Typography>
-          <div className="w-72">
+            <div className="flex items-center w-72">
             <Input
               label="Search"
               icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+              value={searchQuery}
+              onChange={handleSearchChange}
             />
+            <Button onClick={handleSort} className="ml-2" variant="gradient">
+              Sort
+            </Button>
           </div>
         </div>
       </CardHeader>
@@ -179,12 +254,12 @@ export function SalesRecord() {
               <th className="p-3 border-b">Product Category</th>
               <th className="p-3 border-b">Product Brand</th>
               <th className="p-3 border-b">Customer Location</th>
-              <th className="p-3 border-b"></th> {/* Extra column for icons */}
+              <th className="p-3 border-b"></th>
             </tr>
           </thead>
           <tbody>
-            {salesRecords.length > 0 ? (
-              salesRecords.map((record) => (
+            {filteredData.length > 0 ? (
+              filteredData.map((record) => (
                 <tr key={record._id} className="hover:bg-gray-50">
                   <td className="p-3 border-b">{record.year}</td>
                   <td className="p-3 border-b">{record.month}</td>
@@ -192,23 +267,15 @@ export function SalesRecord() {
                   <td className="p-3 border-b">{record.productCategory}</td>
                   <td className="p-3 border-b">{record.productBrand}</td>
                   <td className="p-3 border-b">{record.customerLocation}</td>
-                  <td className="p-3 border-b flex gap-2">
-                    <Tooltip content="Edit Record">
-                      <IconButton
-                        variant="text"
-                        className="text-blue-500"
-                        onClick={() => handleEdit(record)}
-                      >
-                        <PencilIcon className="h-4 w-4" />
+                  <td className="p-3 border-b flex justify-end">
+                    <Tooltip content="Edit">
+                      <IconButton onClick={() => handleEdit(record)} size="sm" variant="text">
+                        <PencilIcon className="h-5 w-5" />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip content="Delete Record">
-                      <IconButton
-                        variant="text"
-                        className="text-red-500"
-                        onClick={() => handleDelete(record._id)}
-                      >
-                        <TrashIcon className="h-4 w-4" />
+                    <Tooltip content="Delete">
+                      <IconButton onClick={() => handleDelete(record._id)} size="sm" variant="text">
+                        <TrashIcon className="h-5 w-5 text-red-500" />
                       </IconButton>
                     </Tooltip>
                   </td>
@@ -224,13 +291,45 @@ export function SalesRecord() {
       </CardBody>
 
       <CardFooter className="flex items-center justify-between border-t p-4">
-        {/* <Typography variant="small" color="blue-gray" className="font-normal">
-          Total Records: {salesRecords.length}
-        </Typography> */}
         <Button onClick={() => setAddDialogOpen(true)} variant="gradient">
           Add Sales Record
         </Button>
+        <Button onClick={fetchPredictiveData} variant="gradient">
+          Show Predictive Data
+        </Button>
+        <Button
+          onClick={handleDownloadCSV}
+          className="bg-green-600 text-white px-4 py-2 rounded shadow-md hover:bg-green-700 focus:outline-none"
+
+        >
+          Download CSV
+        </Button>
       </CardFooter>
+
+      {/* Predictive Data Modal */}
+      <Dialog open={predictiveModalOpen} onClose={() => setPredictiveModalOpen(false)}>
+        <DialogHeader>Predictive Data</DialogHeader>
+        <DialogBody>
+          <div className="flex flex-col space-y-4">
+            {loading && <div>Loading predictive data...</div>}
+            {error && <div className="text-red-500">Error: {error.message}</div>}
+            {predictiveData && predictiveData.predictions && predictiveData.predictions.length > 0 ? (
+              predictiveData.predictions.map((data) => (
+                <div key={data.productCategory} className="flex justify-between border-b py-2">
+                  <span className="font-semibold">{data.productCategory} ({predictiveData.month} {predictiveData.year})</span> 
+                  <span className="text-green-600">{data.predictedSalesQuantity}</span>
+                </div>
+              ))
+            ) : (
+              !loading && <div>No predictive data available.</div>
+            )}
+          </div>
+        </DialogBody>
+        <DialogFooter>
+          <Button onClick={() => setPredictiveModalOpen(false)} variant="outlined">Close</Button>
+        </DialogFooter>
+      </Dialog>
+
 
       {/* Add Sales Record Dialog */}
       <Dialog open={addDialogOpen} handler={() => setAddDialogOpen(false)}>
