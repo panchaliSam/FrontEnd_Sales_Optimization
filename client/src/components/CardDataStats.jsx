@@ -2,6 +2,8 @@
 /* eslint-disable no-unused-vars */
 import React, { ReactNode } from "react";
 
+
+
 const CardDataStats = ({
   title,
   total,
@@ -9,6 +11,8 @@ const CardDataStats = ({
   levelUp,
   levelDown,
   children,
+  forecastData,
+  
 }) => {
   return (
     <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">

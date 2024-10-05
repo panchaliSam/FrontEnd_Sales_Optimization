@@ -3,7 +3,7 @@ import React from "react";
 const brandData = [
   {
     logo: "",
-    name: "Google",
+    name: "Handbag",
     visitors: 3.5,
     revenues: "5,768",
     sales: 590,
@@ -11,7 +11,7 @@ const brandData = [
   },
   {
     logo: "",
-    name: "Twitter",
+    name: "Tunic",
     visitors: 2.2,
     revenues: "4,635",
     sales: 467,
@@ -19,7 +19,7 @@ const brandData = [
   },
   {
     logo: "",
-    name: "Github",
+    name: "Tank Top",
     visitors: 2.1,
     revenues: "4,290",
     sales: 420,
@@ -27,7 +27,7 @@ const brandData = [
   },
   {
     logo: "",
-    name: "Vimeo",
+    name: "Leggings",
     visitors: 1.5,
     revenues: "3,580",
     sales: 389,
@@ -35,7 +35,7 @@ const brandData = [
   },
   {
     logo: "",
-    name: "Facebook",
+    name: "Jacket",
     visitors: 3.5,
     revenues: "6,768",
     sales: 390,
@@ -47,14 +47,13 @@ const TableOne = () => {
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
-        Top Channels
-      </h4>
+Sales Forecast   </h4>
 
       <div className="flex flex-col">
         <div className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-5">
           <div className="p-2.5 xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Source
+              Item Purchased
             </h5>
           </div>
           <div className="p-2.5 text-center xl:p-5">
@@ -89,9 +88,9 @@ const TableOne = () => {
             key={key}
           >
             <div className="flex items-center gap-3 p-2.5 xl:p-5">
-              <div className="flex-shrink-0">
+              {/* <div className="flex-shrink-0">
                 <img src={brand.logo} alt="Brand" />
-              </div>
+              </div> */}
               <p className="hidden text-black dark:text-white sm:block">
                 {brand.name}
               </p>
