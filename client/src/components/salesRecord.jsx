@@ -43,7 +43,9 @@ export function SalesRecord() {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [recordToEdit, setRecordToEdit] = useState(null);
   const [recordToDelete, setRecordToDelete] = useState(null);
-  // const [sortingCriteria, setSortingCriteria] = useState('year');
+  const [isSorted, setIsSorted] = useState(false);
+  const [predictiveData, setPredictiveData] = useState([]);
+  const [predictiveModalOpen, setPredictiveModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     year: '',
     month: '',
@@ -108,23 +110,6 @@ export function SalesRecord() {
   const handleSelectChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
   };
-
-  // const handleSortChange = (event) => {
-  //   setSortingCriteria(event.target.value);
-  // };
-
-  //   // Sorting function
-  //   const sortedSalesRecords = () => {
-  //     const sortedRecords = [...salesRecords];
-  //     if (sortingCriteria === 'year') {
-  //       return sortedRecords.sort((a, b) => a.year - b.year);
-  //     } else if (sortingCriteria === 'productBrand') {
-  //       return sortedRecords.sort((a, b) => a.productBrand.localeCompare(b.productBrand));
-  //     } else if (sortingCriteria === 'salesQuantity') {
-  //       return sortedRecords.sort((a, b) => a.salesQuantity - b.salesQuantity);
-  //     }
-  //     return sortedRecords;
-  //   };
 
   const handleSubmitEdit = async () => {
     try {
@@ -207,6 +192,34 @@ export function SalesRecord() {
     )
   );
 
+  const handleSort = () => {
+    const sortedRecords = [...filteredData].sort((a, b) => {
+      const yearA = a.year;
+      const yearB = b.year;
+      const monthA = months.indexOf(a.month);
+      const monthB = months.indexOf(b.month);
+      if (yearA === yearB) {
+        return monthA - monthB;
+      }
+      return yearA - yearB;
+    });
+    setSalesRecords(sortedRecords);
+    setIsSorted(true);
+  };
+
+  const fetchPredictiveData = async () => {
+    try {
+        const response = await axios.get('http://localhost:4002/api/salesRecord/quantity/predictiveData');
+        console.log('Predictive Data Response:', response.data); // Log response
+        setPredictiveData(response.data);
+        setPredictiveModalOpen(true);
+    } catch (error) {
+        console.error('Error fetching predictive data:', error);
+        alert('Failed to fetch predictive data.');
+    }
+};
+
+
   if (loading) return <div className="p-4">Loading...</div>;
   if (error) return <div className="p-4 text-red-600">{error}</div>;
 
@@ -217,13 +230,16 @@ export function SalesRecord() {
           <Typography variant="h5" className="italic">
             S A L E S&nbsp;&nbsp;R E C O R D S
           </Typography>
-          <div className="w-72">
+            <div className="flex items-center w-72">
             <Input
               label="Search"
               icon={<MagnifyingGlassIcon className="h-5 w-5" />}
               value={searchQuery}
               onChange={handleSearchChange}
             />
+            <Button onClick={handleSort} className="ml-2" variant="gradient">
+              Sort
+            </Button>
           </div>
         </div>
       </CardHeader>
@@ -278,14 +294,41 @@ export function SalesRecord() {
         <Button onClick={() => setAddDialogOpen(true)} variant="gradient">
           Add Sales Record
         </Button>
-        <button
+        <Button onClick={fetchPredictiveData} variant="gradient">
+          Show Predictive Data
+        </Button>
+        <Button
           onClick={handleDownloadCSV}
           className="bg-green-600 text-white px-4 py-2 rounded shadow-md hover:bg-green-700 focus:outline-none"
 
         >
           Download CSV
-        </button>
+        </Button>
       </CardFooter>
+
+      {/* Predictive Data Modal */}
+      <Dialog open={predictiveModalOpen} onClose={() => setPredictiveModalOpen(false)}>
+        <DialogHeader>Predictive Data</DialogHeader>
+        <DialogBody>
+          <div className="flex flex-col space-y-4">
+            {loading && <div>Loading predictive data...</div>}
+            {error && <div className="text-red-500">Error: {error.message}</div>}
+            {predictiveData && predictiveData.predictions && predictiveData.predictions.length > 0 ? (
+              predictiveData.predictions.map((data) => (
+                <div key={data.productCategory} className="flex justify-between border-b py-2">
+                  <span className="font-semibold">{data.productCategory} ({predictiveData.month} {predictiveData.year})</span> 
+                  <span className="text-green-600">{data.predictedSalesQuantity}</span>
+                </div>
+              ))
+            ) : (
+              !loading && <div>No predictive data available.</div>
+            )}
+          </div>
+        </DialogBody>
+        <DialogFooter>
+          <Button onClick={() => setPredictiveModalOpen(false)} variant="outlined">Close</Button>
+        </DialogFooter>
+      </Dialog>
 
 
       {/* Add Sales Record Dialog */}
