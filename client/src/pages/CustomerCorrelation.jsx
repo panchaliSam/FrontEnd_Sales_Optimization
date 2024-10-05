@@ -18,6 +18,7 @@ const ECommerce = () => {
   const [paymentMethodData, setPaymentMethodData] = useState([]);
   const [paymentMethodsPercentage, setPaymentMethodsPercentage] = useState([]);
   const [monthlyCustomerData, setMonthlyCustomerData] = useState([]);
+  const [forecastMonthlyData, setForecastMonthlyData] = useState([]);
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -48,7 +49,7 @@ const ECommerce = () => {
       setPaymentMethodsPercentage(
         paymentMethodResponse.data.map((item) => item.Percentage)
       );
-      console.log(monthlyCustomersResponse.data);
+      console.log(predictResponse.data);
 
       const monthsList = [
         "January",
@@ -92,6 +93,37 @@ const ECommerce = () => {
         },
         []
       );
+
+      // Group by year and ensure all months are represented
+      const monthlyForecastResponseData = predictResponse.data.forecast.reduce(
+        (acc, item) => {
+          const [month, year] = item.Month.split(" "); // Split month and year from "Month" field
+
+          // Check if year already exists in the accumulator
+          let existingYear = acc.find((obj) => obj.year === year);
+
+          if (!existingYear) {
+            // If year doesn't exist, initialize it with an array of zeros for all months
+            existingYear = {
+              year: year,
+              data: Array(12).fill(0) // Initialize all 12 months with zero
+            };
+            acc.push(existingYear);
+          }
+
+          // Get the index of the month from monthsList and update the value
+          const monthIndex = monthsList.indexOf(month);
+          if (monthIndex !== -1) {
+            existingYear.data[monthIndex] = item.MonthSales;
+          }
+
+          return acc;
+        },
+        []
+      );
+
+      console.log(monthlyForecastResponseData);
+      setForecastMonthlyData(monthlyForecastResponseData);
       setMonthlyCustomerData(monthlyCustomerResponseData);
       console.log("hiiii", result);
     } catch (err) {
@@ -264,12 +296,35 @@ const ECommerce = () => {
             </CardDataStats>
           </div>
           <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
-            <ChartOne monthlyCustomerData={monthlyCustomerData} />
+            <ChartOne
+              monthlyData={monthlyCustomerData}
+              maximum={300}
+              colors={["#80CAEE"]}
+              title="Monthly Sales"
+              style={{
+                textColor: "font-semibold text-secondary",
+                dotStyles:
+                  "block h-2.5 w-full max-w-2.5 rounded-full bg-secondary",
+                dotOuterStyles:
+                  "mt-1 mr-2 flex h-4 w-full max-w-4 items-center justify-center rounded-full border border-secondary"
+              }}
+            />
 
-            <ChartOne monthlyCustomerData={monthlyCustomerData} />
+            <ChartOne
+              monthlyData={forecastMonthlyData}
+              maximum={30000}
+              colors={["#3C50E0"]}
+              title="Sales Forecast"
+              style={{
+                textColor: "font-semibold text-primary",
+                dotStyles:
+                  "block h-2.5 w-full max-w-2.5 rounded-full bg-primary",
+                dotOuterStyles:
+                  "mt-1 mr-2 flex h-4 w-full max-w-4 items-center justify-center rounded-full border border-primary"
+              }}
+            />
 
-            {/* <ChartTwo weeklySalesData={weeklySalesData}
-              /> */}
+          
             <ChartThree
               paymentMethodData={paymentMethodData}
               paymentMethodsPercentage={paymentMethodsPercentage}
