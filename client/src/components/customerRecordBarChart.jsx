@@ -87,7 +87,8 @@ export const CustomerRecordBarChart = () => {
       tooltip: {
         callbacks: {
           label: function (context) {
-            return `${context.dataset.label}: ${context.raw}`;
+            const value = context.raw;
+            return `${context.dataset.label}: ${value} customer${value > 1 ? 's' : ''}`;
           },
         },
       },
@@ -105,9 +106,16 @@ export const CustomerRecordBarChart = () => {
           display: true,
           text: 'Number of Customers',
         },
+        ticks: {
+          precision: 0, // Ensure no decimal points are shown
+          callback: function (value) {
+            return `${value} customers`; // Display customer count with "customers" appended
+          },
+        },
       },
     },
   };
+  
 
   return (
     <div className="max-w-4xl mx-auto p-4 bg-white shadow-lg rounded-lg">

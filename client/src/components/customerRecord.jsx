@@ -377,6 +377,7 @@ export function CustomerRecord() {
               name="name"
               value={formData.name}
               onChange={handleChange}
+              required
             />
             <Input
               type="email"
@@ -384,6 +385,7 @@ export function CustomerRecord() {
               name="email"
               value={formData.email}
               onChange={handleChange}
+              required
             />
             <Input
               type="number"
@@ -391,12 +393,14 @@ export function CustomerRecord() {
               name="age"
               value={formData.age}
               onChange={handleChange}
+              required
             />
             <Select
               label="Location"
               name="location"
               value={formData.location}
               onChange={(e) => setFormData({ ...formData, location: e })}
+              required
             >
               {sriLankanProvinces.map((province) => (
                 <Option key={province} value={province}>
@@ -410,6 +414,7 @@ export function CustomerRecord() {
               name="totalPurchases"
               value={formData.totalPurchases}
               onChange={handleChange}
+              required
             />
             <Input
               type="number"
@@ -417,6 +422,7 @@ export function CustomerRecord() {
               name="purchaseFrequency"
               value={formData.purchaseFrequency}
               onChange={handleChange}
+              required
             />
             <Input
               type="number"
@@ -424,12 +430,14 @@ export function CustomerRecord() {
               name="averageSpendingPerOrder"
               value={formData.averageSpendingPerOrder}
               onChange={handleChange}
+              required
             />
             <Select
               label="Product Category"
               name="productCategory"
               value={formData.productCategory}
               onChange={(e) => setFormData({ ...formData, productCategory: e })}
+              required
             >
               {productCategories.map((category) => (
                 <Option key={category} value={category}>
@@ -442,6 +450,7 @@ export function CustomerRecord() {
               name="customerSegment"
               value={formData.customerSegment}
               onChange={(e) => setFormData({ ...formData, customerSegment: e })}
+              required
             >
               {customerTypes.map((type) => (
                 <Option key={type} value={type}>
@@ -455,6 +464,7 @@ export function CustomerRecord() {
               name="lastPurchaseDate"
               value={formData.lastPurchaseDate}
               onChange={handleChange}
+              required
             />
           </div>
         </DialogBody>
