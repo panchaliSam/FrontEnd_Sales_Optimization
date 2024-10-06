@@ -29,6 +29,7 @@ const productCategories = ['Clothing', 'Footwear', 'Accessories'];
 
 export function CustomerRecord() {
   const [customerRecords, setCustomerRecords] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -119,6 +120,18 @@ export function CustomerRecord() {
     }
   };
 
+    // Function to handle search input
+    const handleSearchChange = (e) => {
+      setSearchQuery(e.target.value);
+    };
+  
+    // Function to filter data based on search input
+    const filteredData = customerRecords.filter(record => 
+      Object.values(record).some((value) =>
+        value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+
   const handleSubmitAdd = async () => {
     try {
       const response = await axios.post('http://localhost:4002/api/customerRecord', formData);
@@ -158,64 +171,67 @@ export function CustomerRecord() {
             <Input
               label="Search"
               icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+              value={searchQuery}
+              onChange={handleSearchChange}
             />
           </div>
         </div>
       </CardHeader>
 
       <CardBody className="overflow-x-auto">
-        <table className="mt-4 w-full min-w-max table-auto text-left bg-white rounded-lg shadow-md">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="p-3 border-b">Name</th>
-              <th className="p-3 border-b">Email</th>
-              <th className="p-3 border-b">Age</th>
-              <th className="p-3 border-b">Location</th>
-              <th className="p-3 border-b">Total Purchases</th>
-              <th className="p-3 border-b">Customer Segment</th>
-              <th className="p-3 border-b"></th> {/* Extra column for icons */}
-            </tr>
-          </thead>
-          <tbody>
-            {customerRecords.length > 0 ? (
-              customerRecords.map((record) => (
-                <tr key={record._id} className="hover:bg-gray-50">
-                  <td className="p-3 border-b">{record.name}</td>
-                  <td className="p-3 border-b">{record.email}</td>
-                  <td className="p-3 border-b">{record.age}</td>
-                  <td className="p-3 border-b">{record.location}</td>
-                  <td className="p-3 border-b">{record.totalPurchases}</td>
-                  <td className="p-3 border-b">{record.customerSegment}</td>
-                  <td className="p-3 border-b flex gap-2">
-                    <Tooltip content="Edit Record">
-                      <IconButton
-                        variant="text"
-                        className="text-blue-500"
-                        onClick={() => handleEdit(record)}
-                      >
-                        <PencilIcon className="h-4 w-4" />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip content="Delete Record">
-                      <IconButton
-                        variant="text"
-                        className="text-red-500"
-                        onClick={() => handleDelete(record._id)}
-                      >
-                        <TrashIcon className="h-4 w-4" />
-                      </IconButton>
-                    </Tooltip>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="7" className="p-3 text-center">No records found</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </CardBody>
+  <table className="mt-4 w-full min-w-max table-auto text-left bg-white rounded-lg shadow-md">
+    <thead>
+      <tr className="bg-gray-100">
+        <th className="p-3 border-b">Name</th>
+        <th className="p-3 border-b">Email</th>
+        <th className="p-3 border-b">Age</th>
+        <th className="p-3 border-b">Location</th>
+        <th className="p-3 border-b">Total Purchases</th>
+        <th className="p-3 border-b">Customer Segment</th>
+        <th className="p-3 border-b"></th> {/* Extra column for icons */}
+      </tr>
+    </thead>
+    <tbody>
+      {filteredData.length > 0 ? (
+        filteredData.map((record) => ( // Use filteredData instead of customerRecords
+          <tr key={record._id} className="hover:bg-gray-50">
+            <td className="p-3 border-b">{record.name}</td>
+            <td className="p-3 border-b">{record.email}</td>
+            <td className="p-3 border-b">{record.age}</td>
+            <td className="p-3 border-b">{record.location}</td>
+            <td className="p-3 border-b">{record.totalPurchases}</td>
+            <td className="p-3 border-b">{record.customerSegment}</td>
+            <td className="p-3 border-b flex gap-2">
+              <Tooltip content="Edit Record">
+                <IconButton
+                  variant="text"
+                  className="text-blue-500"
+                  onClick={() => handleEdit(record)}
+                >
+                  <PencilIcon className="h-4 w-4" />
+                </IconButton>
+              </Tooltip>
+              <Tooltip content="Delete Record">
+                <IconButton
+                  variant="text"
+                  className="text-red-500"
+                  onClick={() => handleDelete(record._id)}
+                >
+                  <TrashIcon className="h-4 w-4" />
+                </IconButton>
+              </Tooltip>
+            </td>
+          </tr>
+        ))
+      ) : (
+        <tr>
+          <td colSpan="7" className="p-3 text-center">No records found</td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</CardBody>
+
 
       <CardFooter className="flex items-center justify-between border-t p-4">
         <Button onClick={() => setAddDialogOpen(true)} variant="gradient">
@@ -353,7 +369,7 @@ export function CustomerRecord() {
           unmount: { scale: 0.9, y: -100 },
         }}
       >
-        <DialogHeader>Add Customer Record</DialogHeader>
+        <DialogHeader>Add New Customer Record</DialogHeader>
         <DialogBody divider>
           <div className="grid grid-cols-1 gap-4">
             <Input
@@ -361,7 +377,6 @@ export function CustomerRecord() {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              required
             />
             <Input
               type="email"
@@ -369,7 +384,6 @@ export function CustomerRecord() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              required
             />
             <Input
               type="number"
@@ -377,17 +391,17 @@ export function CustomerRecord() {
               name="age"
               value={formData.age}
               onChange={handleChange}
-              required
             />
             <Select
               label="Location"
               name="location"
               value={formData.location}
               onChange={(e) => setFormData({ ...formData, location: e })}
-              required
             >
               {sriLankanProvinces.map((province) => (
-                <Option key={province} value={province}>{province}</Option>
+                <Option key={province} value={province}>
+                  {province}
+                </Option>
               ))}
             </Select>
             <Input
@@ -396,7 +410,6 @@ export function CustomerRecord() {
               name="totalPurchases"
               value={formData.totalPurchases}
               onChange={handleChange}
-              required
             />
             <Input
               type="number"
@@ -404,7 +417,6 @@ export function CustomerRecord() {
               name="purchaseFrequency"
               value={formData.purchaseFrequency}
               onChange={handleChange}
-              required
             />
             <Input
               type="number"
@@ -412,17 +424,17 @@ export function CustomerRecord() {
               name="averageSpendingPerOrder"
               value={formData.averageSpendingPerOrder}
               onChange={handleChange}
-              required
             />
             <Select
               label="Product Category"
               name="productCategory"
               value={formData.productCategory}
               onChange={(e) => setFormData({ ...formData, productCategory: e })}
-              required
             >
               {productCategories.map((category) => (
-                <Option key={category} value={category}>{category}</Option>
+                <Option key={category} value={category}>
+                  {category}
+                </Option>
               ))}
             </Select>
             <Select
@@ -430,10 +442,11 @@ export function CustomerRecord() {
               name="customerSegment"
               value={formData.customerSegment}
               onChange={(e) => setFormData({ ...formData, customerSegment: e })}
-              required
             >
               {customerTypes.map((type) => (
-                <Option key={type} value={type}>{type}</Option>
+                <Option key={type} value={type}>
+                  {type}
+                </Option>
               ))}
             </Select>
             <Input
@@ -442,7 +455,6 @@ export function CustomerRecord() {
               name="lastPurchaseDate"
               value={formData.lastPurchaseDate}
               onChange={handleChange}
-              required
             />
           </div>
         </DialogBody>
@@ -450,7 +462,9 @@ export function CustomerRecord() {
           <Button variant="text" color="red" onClick={() => setAddDialogOpen(false)}>
             Cancel
           </Button>
-          <Button onClick={handleSubmitAdd} variant="gradient">Add</Button>
+          <Button onClick={handleSubmitAdd} variant="gradient">
+            Add
+          </Button>
         </DialogFooter>
       </Dialog>
     </Card>
