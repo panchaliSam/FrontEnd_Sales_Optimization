@@ -134,7 +134,7 @@ const ECommerce = () => {
   const handlePredict = async (formData) => {
     return await axios.post(
       "http://127.0.0.1:5000/predict",
-      formData, // Sending the same formData containing the file
+      formData, 
       {
         headers: {
           "Content-Type": "multipart/form-data"
@@ -146,7 +146,7 @@ const ECommerce = () => {
   const handlePaymentMethodData = async (formData) => {
     return await axios.post(
       "http://127.0.0.1:5000/payment_percentages",
-      formData, // Sending the same formData containing the file
+      formData, 
       {
         headers: {
           "Content-Type": "multipart/form-data"
@@ -158,7 +158,7 @@ const ECommerce = () => {
   const handleMonthlyCustomersData = async (formData) => {
     return await axios.post(
       "http://127.0.0.1:5000/monthly_customers",
-      formData, // Sending the same formData containing the file
+      formData, 
       {
         headers: {
           "Content-Type": "multipart/form-data"
@@ -199,7 +199,7 @@ const ECommerce = () => {
             <CardDataStats
               forecastData={forecastData}
               title="Total Sales"
-              total={forecastData.sum_sales}
+              total={`$${forecastData.sum_sales}`}
             >
               <svg
                 className="fill-primary dark:fill-white"
@@ -246,7 +246,7 @@ const ECommerce = () => {
                 />
               </svg>
             </CardDataStats>
-            <CardDataStats title="Upload CSV">
+            <CardDataStats title="Profit" total="$235000">
               <svg
                 className="fill-primary dark:fill-white"
                 width="22"
@@ -268,31 +268,7 @@ const ECommerce = () => {
                   fill=""
                 />
               </svg>
-              <form onSubmit={handleSubmit}>
-                <div className="mt-4">
-                  <label
-                    htmlFor="csvUpload"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Upload CSV
-                  </label>
-                  <input
-                    type="file"
-                    id="csvUpload"
-                    accept=".csv"
-                    className="mt-2 p-2 border border-gray-300 rounded-md"
-                    onChange={handleFileChange} // Call handleFileChange when file is selected
-                  />
-                </div>
-
-                <button
-                  onClick={() => handleSubmit()}
-                  type="submit"
-                  className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md"
-                >
-                  Upload and Predict
-                </button>
-              </form>
+              
             </CardDataStats>
           </div>
           <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
